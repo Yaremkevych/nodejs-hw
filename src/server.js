@@ -8,22 +8,28 @@ const PORT = process.env.PORT ?? 3000;
 
 app.use(cors());
 app.use(helmet());
-app.use(express());
+app.use(express.json());
 app.use(
-  pino({
-    level: 'info',
-    transport: {
-      target: 'pino-pretty',
-      options: {
-        colorize: true,
-        translateTime: 'HH:MM:ss',
-        ignore: 'pid,hostname',
-        messageFormat:
-          '{req.method} {req.url} {res.statusCode} - {responseTime}ms',
-        hideObject: true,
-      },
-    },
-  }),
+  pino(
+    process.env.NODE_ENV !== 'production'
+      ? {
+          level: 'info',
+          transport: {
+            target: 'pino-pretty',
+            options: {
+              colorize: true,
+              translateTime: 'HH:MM:ss',
+              ignore: 'pid,hostname',
+              messageFormat:
+                '{req.method} {req.url} {res.statusCode} - {responseTime}ms',
+              hideObject: true,
+            },
+          },
+        }
+      : {
+          level: 'info',
+        },
+  ),
 );
 
 // Маршрут усіх нотаток
