@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import { errors } from 'celebrate';
 import { connectMongoDB } from './db/connectMongoDB.js';
 import 'dotenv/config';
 import { notFoundHandler } from './middleware/notFoundHandler.js';
@@ -22,7 +23,9 @@ app.use(express.json());
 app.use(logger);
 
 app.use(notesRoutes);
+
 app.use(notFoundHandler);
+app.use(errors());
 app.use(errorHandler);
 
 // підключення до MongoDB
