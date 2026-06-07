@@ -8,7 +8,7 @@ export async function updateUserAvatar(req, res) {
     throw createHttpError(400, 'No file');
   }
 
-  const result = await saveFileToCloudinary(req.file.buffer);
+  const result = await saveFileToCloudinary(req.file.buffer, req.user._id);
   if (!result) {
     throw createHttpError(500, 'Error of upload avatar(');
   }
