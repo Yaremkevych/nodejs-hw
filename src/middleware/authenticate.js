@@ -3,24 +3,35 @@ import { Session } from '../models/session.js';
 import { User } from '../models/user.js';
 
 export async function authenticate(req, res, next) {
-  const token = req.cookies.accessToken;
-  if (!token) {
+  const { accessToken, sessionId } = req.cookies;
+
+  if (!accessToken) {
     throw createHttpError(401, 'Missing access token');
   }
 
-  const session = await Session.findOne({ accessToken: token });
+  if (!sessionId) {
+    throw createHttpError(401, 'Missing session id');
+  }
+
+  const session = await Session.findOne({
+    _id: sessionId,
+    accessToken,
+  });
+
   if (!session) {
     throw createHttpError(401, 'Session not found');
   }
 
   const isInvalidToken = new Date() > new Date(session.accessTokenValidUntil);
+
   if (isInvalidToken) {
     throw createHttpError(401, 'Access token expired');
   }
 
   const user = await User.findById(session.userId);
+
   if (!user) {
-    throw createHttpError(401);
+    throw createHttpError(401, 'User not found');
   }
 
   req.user = user;

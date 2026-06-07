@@ -43,10 +43,9 @@ noteSchema.index(
   },
 );
 
-noteSchema.index(
-  { tag: 1 },
-  {
-    name: 'TagIndex',
-  },
-);
+noteSchema.index({
+  tag: 1,
+  userId: 1,
+});
+
 export const Note = model('Note', noteSchema);
